@@ -6,13 +6,17 @@ Until Stage 7, all work targets **dev** only.
 
 **Plan only.** We never run `terraform apply`, and nothing is created or changed in Azure. `plan` only reads from Azure.
 
-**Every stage** runs the same checks before showing output: `terraform fmt -check` and `terraform validate`.
+**Every stage** runs the same checks before showing output: `terraform fmt -check` and `terraform validate`. `scripts/plan.sh <env>` runs them and the plan in one go.
+
+**Status** lines record progress: `Not started`, `In progress`, `Built, awaiting gate approval`, or `Done (approved YYYY-MM-DD)`. The first stage that isn't `Done` is the current stage. Only the user's explicit approval at a gate sets `Done`.
 
 Terraform code lives in `terraform/` and per-environment settings in `env/<env>/`. Commands run from the repo root with `terraform -chdir=terraform`. Paths given to `-var-file` and `-backend-config` are relative to `terraform/`, so they start with `../env/`.
 
 ---
 
 ## Stage 0: Toolchain and naming (no Azure calls)
+
+**Status:** Built, awaiting gate approval
 
 **Build**
 - `versions.tf`: latest stable Terraform plus pinned `azurerm`
@@ -26,6 +30,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 **Gate:** Do the names and tags match the standard?
 
 ## Stage 1: Remote state
+
+**Status:** Not started
 
 **Build**
 - `backend.tf` with a partial `azurerm` backend
@@ -41,6 +47,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 
 ## Stage 2: Network foundation
 
+**Status:** Not started
+
 **Build** (AVM modules)
 - Resource group
 - Spoke VNet
@@ -53,6 +61,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 **Gate:** Are the address space and NSG rules right?
 
 ## Stage 3: Single VM spike (highest risk first)
+
+**Status:** Not started
 
 **Build**
 - 1 × Windows Server 2022 DS4 VM in `web` (AVM VM module), with `count = 1` set from tfvars
@@ -67,6 +77,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 
 ## Stage 4: Scale the web tier and add its load balancer
 
+**Status:** Not started
+
 **Build**
 - Web VM count raised to 4 (from tfvars)
 - Internal web load balancer (AVM): backend pool, 443 health probe, rule
@@ -78,6 +90,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 **Gate:** Is the web tier correct?
 
 ## Stage 5: Middleware tier
+
+**Status:** Not started
 
 **Build**
 - 4 × middleware VMs
@@ -91,6 +105,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 
 ## Stage 6: Final quality review
 
+**Status:** Not started
+
 **Build**
 - A full run of `fmt` and `validate` across the finished code, plus a manual review against INTENT.md. These checks have already run at every stage.
 
@@ -100,6 +116,8 @@ Terraform code lives in `terraform/` and per-environment settings in `env/<env>/
 **Gate:** Is the code accepted?
 
 ## Stage 7: Prod
+
+**Status:** Not started
 
 **Build**
 - `terraform -chdir=terraform plan -var-file=../env/prod/terraform.tfvars` against the prod subscription

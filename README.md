@@ -10,17 +10,29 @@ Terraform for an Azure proof of concept: a spoke network with a web tier and a m
 README.md
 docs/          intent, staged plan, architecture diagram, ADRs
 env/<env>/     per-environment variables (and backend config, from Stage 1)
+scripts/       doctor.sh (environment check) and plan.sh (checks + plan + summary)
 terraform/     root module
 ```
 
 ## Prerequisites
 
-- Terraform `~> 1.17`
+- Terraform `~> 1.17`, `jq`, and Node (for the Copilot hooks)
 - Azure CLI, logged in (`az login`) with the target subscription selected
+
+Run `scripts/doctor.sh` to check all of these.
 
 ## Usage
 
 Run from the repository root:
+
+```sh
+scripts/plan.sh --outputs dev   # init, fmt -check, validate, plan, summary and output values
+scripts/plan.sh prod
+```
+
+`plan.sh` keeps the full plan log in `.plans/<env>.plan.log`. If `env/<env>/terraform.tfvars` sets `subscription_id`, it refuses to plan against any other subscription.
+
+The underlying commands, if you need them:
 
 ```sh
 terraform -chdir=terraform init
@@ -31,6 +43,16 @@ terraform -chdir=terraform plan -var-file=../env/prod/terraform.tfvars
 ```
 
 Paths passed to `-var-file` are relative to `terraform/`.
+
+## Working with Copilot
+
+| What | Where |
+|---|---|
+| Project rules | [.github/copilot-instructions.md](.github/copilot-instructions.md), and [terraform.instructions.md](.github/instructions/terraform.instructions.md) for `.tf`/`.tfvars` |
+| Skills | `/stage-gate`, `/avm-module`, `/new-adr` in [.github/skills/](.github/skills/) |
+| Hooks | Plan only, no secrets in Terraform files, `terraform fmt` after edits, and environment facts at session start ([ADR-0010](docs/adr/0010-helper-scripts-and-agent-guard-rails.md)) |
+
+Start a new chat for each stage. The **Status** lines in [docs/PLAN.md](docs/PLAN.md) tell it where to pick up. For staged work, use the **Copilot** harness with **Default** or **Auto-approve** permissions, not autopilot: autopilot answers gate questions itself.
 
 ## Docs
 

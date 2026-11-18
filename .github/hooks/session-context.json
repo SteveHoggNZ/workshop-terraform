@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "test -f .github/hooks/scripts/session-context.cjs || { echo '{}'; exit 0; }; node .github/hooks/scripts/session-context.cjs",
+        "timeoutSec": 20
+      }
+    ]
+  }
+}

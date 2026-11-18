@@ -8,7 +8,7 @@ Until Stage 7, all work targets **dev** only.
 
 **Every stage** runs the same checks before showing output: `terraform fmt -check` and `terraform validate`.
 
-All Terraform code lives in `terraform/`, and every command runs from that directory.
+Terraform code lives in `terraform/` and per-environment settings in `env/<env>/`. Commands run from the repo root with `terraform -chdir=terraform`. Paths given to `-var-file` and `-backend-config` are relative to `terraform/`, so they start with `../env/`.
 
 ---
 
@@ -34,7 +34,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 **Prerequisite:** The state storage account and container must **already exist**, because we won't create them. If they don't exist yet, we keep local state for planning and switch over later.
 
 **Output shown**
-- `terraform init -backend-config=env/dev/backend.hcl` succeeds
+- `terraform -chdir=terraform init -backend-config=../env/dev/backend.hcl` succeeds
 - The state blob location is displayed
 
 **Gate:** Is the state location and layout acceptable?
@@ -48,7 +48,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 - NSGs with inbound 443 and outbound 1521
 
 **Output shown**
-- `terraform plan -var-file=env/dev/terraform.tfvars` summary: resources, address ranges, NSG rules
+- `terraform -chdir=terraform plan -var-file=../env/dev/terraform.tfvars` summary: resources, address ranges, NSG rules
 
 **Gate:** Are the address space and NSG rules right?
 
@@ -102,7 +102,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 ## Stage 7: Prod
 
 **Build**
-- `terraform plan -var-file=env/prod/terraform.tfvars` against the prod subscription
+- `terraform -chdir=terraform plan -var-file=../env/prod/terraform.tfvars` against the prod subscription
 
 **Output shown**
 - Prod plan, plus a diff of how prod differs from dev (tfvars only)

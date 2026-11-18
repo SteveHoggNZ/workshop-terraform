@@ -1,6 +1,6 @@
 # ADR-0003: Repository layout
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0009](0009-repository-layout-top-level-env-and-docs.md)
 - **Date:** 2026-11-18
 
 ## Context

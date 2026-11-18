@@ -10,7 +10,7 @@ This work proves the design. It must not change anything in Azure. Remote state 
 ## Decision
 
 - We only run `terraform plan`, never `terraform apply`. `plan` reads from Azure but doesn't change it.
-- State stays **local** until an existing storage account and container are provided for each environment. We then move it to the `azurerm` backend using `terraform/env/<env>/backend.hcl`.
+- State stays **local** until an existing storage account and container are provided for each environment. We then move it to the `azurerm` backend using `env/<env>/backend.hcl` (see ADR-0009).
 - Planning uses the subscription currently selected in the Azure CLI.
 
 ## Consequences

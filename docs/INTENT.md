@@ -7,7 +7,7 @@ Move a multi-server application that runs in an on-prem data centre into Azure a
 ## Environments
 
 - **dev** and **prod** each live in their **own Azure subscription**.
-- **One root module** serves both environments. Environment differences are set only in `terraform/env/dev/terraform.tfvars` / `terraform/env/prod/terraform.tfvars`.
+- **One root module** serves both environments. Environment differences are set only in `env/dev/terraform.tfvars` / `env/prod/terraform.tfvars`.
 - Both environments have the **same topology**. Counts, sizes and address ranges are variables, so either environment can be scaled independently.
 - Each environment keeps its **own state file** in an **Azure Blob Storage** backend.
 

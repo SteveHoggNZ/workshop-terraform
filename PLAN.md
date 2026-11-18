@@ -18,7 +18,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 - `versions.tf`: latest stable Terraform plus pinned `azurerm`
 - `variables.tf`, `locals.tf`: naming convention and tags
 - `outputs.tf`: the generated names
-- `dev.tfvars` and `prod.tfvars`
+- `env/dev/terraform.tfvars` and `env/prod/terraform.tfvars`
 
 **Output shown**
 - A table of every resource name for dev and prod, rendered with `terraform console` / `terraform plan`, plus the tags.
@@ -29,12 +29,12 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 
 **Build**
 - `backend.tf` with a partial `azurerm` backend
-- `backend/dev.hcl` and `backend/prod.hcl`, one Blob container/key per environment, each in its own subscription
+- `env/dev/backend.hcl` and `env/prod/backend.hcl`, one Blob container/key per environment, each in its own subscription
 
 **Prerequisite:** The state storage account and container must **already exist**, because we won't create them. If they don't exist yet, we keep local state for planning and switch over later.
 
 **Output shown**
-- `terraform init -backend-config=backend/dev.hcl` succeeds
+- `terraform init -backend-config=env/dev/backend.hcl` succeeds
 - The state blob location is displayed
 
 **Gate:** Is the state location and layout acceptable?
@@ -48,7 +48,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 - NSGs with inbound 443 and outbound 1521
 
 **Output shown**
-- `terraform plan -var-file=dev.tfvars` summary: resources, address ranges, NSG rules
+- `terraform plan -var-file=env/dev/terraform.tfvars` summary: resources, address ranges, NSG rules
 
 **Gate:** Are the address space and NSG rules right?
 
@@ -102,7 +102,7 @@ All Terraform code lives in `terraform/`, and every command runs from that direc
 ## Stage 7: Prod
 
 **Build**
-- `terraform plan -var-file=prod.tfvars` against the prod subscription
+- `terraform plan -var-file=env/prod/terraform.tfvars` against the prod subscription
 
 **Output shown**
 - Prod plan, plus a diff of how prod differs from dev (tfvars only)

@@ -56,12 +56,12 @@ flowchart LR
     subgraph CODE["Single root module"]
         TF["main.tf / variables.tf / locals.tf<br/>AVM modules"]
     end
-    DEVVARS["dev.tfvars"] --> TF
-    PRODVARS["prod.tfvars"] --> TF
-    DEVBE["backend/dev.hcl"] --> STDEV[("Blob state: dev")]
-    PRODBE["backend/prod.hcl"] --> STPROD[("Blob state: prod")]
-    TF -- "plan/apply -var-file=dev.tfvars" --> DEVSUB["Dev subscription"]
-    TF -- "plan/apply -var-file=prod.tfvars" --> PRODSUB["Prod subscription"]
+    DEVVARS["env/dev/terraform.tfvars"] --> TF
+    PRODVARS["env/prod/terraform.tfvars"] --> TF
+    DEVBE["env/dev/backend.hcl"] --> STDEV[("Blob state: dev")]
+    PRODBE["env/prod/backend.hcl"] --> STPROD[("Blob state: prod")]
+    TF -- "plan -var-file=env/dev/terraform.tfvars" --> DEVSUB["Dev subscription"]
+    TF -- "plan -var-file=env/prod/terraform.tfvars" --> PRODSUB["Prod subscription"]
     TF -.-> STDEV
     TF -.-> STPROD
 ```
